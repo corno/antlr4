@@ -56,8 +56,31 @@ if [ ! -f "$JAR_PATH" ]; then
     exit 1
 fi
 
+# Check if source is newer than JAR and rebuild if needed
+JAVA_SOURCE="tool/src/org/antlr/v4/tool/GrammarJSONExporterDOM.java"
+if [ "$JAVA_SOURCE" -nt "$JAR_PATH" ]; then
+    print_status $YELLOW "Source code is newer than JAR. Rebuilding..."
+    if (cd tool && mvn package -q); then
+        print_status $GREEN "✓ Build successful"
+    else
+        print_status $RED "✗ Build failed"
+        exit 1
+    fi
+else
+    print_status $GREEN "✓ JAR is up to date"
+fi
+
 # Create output directory
 mkdir -p "$OUTPUT_DIR"
+
+# Clean the target directory to remove any stale files
+print_status $YELLOW "Cleaning target directory: $OUTPUT_DIR"
+if [ -d "$OUTPUT_DIR" ]; then
+    rm -rf "$OUTPUT_DIR"/*
+    print_status $GREEN "✓ Target directory cleaned"
+else
+    print_status $GREEN "✓ Target directory created"
+fi
 
 print_status $BLUE "Starting grammar conversion..."
 print_status $BLUE "Source: $SOURCE_DIR"

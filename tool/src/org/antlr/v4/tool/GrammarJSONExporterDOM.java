@@ -353,7 +353,7 @@ public class GrammarJSONExporterDOM {
     private VerboseTypeValue convertRule(Rule rule) {
         VerboseTypeValue obj = new VerboseTypeValue();
         
-        obj.put("name", rule.name);
+        // Note: rule name is omitted since it's the dictionary key
         
         // Rule modifiers (fragment, etc.)
         List<String> modifiers = extractRuleModifiers(rule);

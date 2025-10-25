@@ -1,0 +1,10 @@
+(
+  'name': "Test"
+  'fileName': "tool/test.g4"
+  'type': | 'combined' ()
+  'rules': {}
+  'tokenNameToTypeMap': {
+    `EOF`: -1
+  }
+  'stringLiteralToTypeMap': {}
+)
