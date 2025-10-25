@@ -1,0 +1,171 @@
+{
+  "name": "TestLexer",
+  "fileName": "test-grammars/TestLexer.g4",
+  "type": [
+    "lexer",
+    {
+    }
+  ],
+  "rules": {
+    "IF": {
+      "name": "IF",
+      "alternatives": [
+        {
+          "elements": [
+            [
+              "token",
+              {
+                "name": "'if'"
+
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "WHILE": {
+      "name": "WHILE",
+      "alternatives": [
+        {
+          "elements": [
+            [
+              "token",
+              {
+                "name": "'while'"
+
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "FOR": {
+      "name": "FOR",
+      "alternatives": [
+        {
+          "elements": [
+            [
+              "token",
+              {
+                "name": "'for'"
+
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "LETTER": {
+      "name": "LETTER",
+      "modifiers": ["fragment"],
+      "alternatives": [
+        {
+          "elements": [
+
+          ]
+        }
+      ]
+    },
+    "DIGIT": {
+      "name": "DIGIT",
+      "modifiers": ["fragment"],
+      "alternatives": [
+        {
+          "elements": [
+
+          ]
+        }
+      ]
+    },
+    "ID": {
+      "name": "ID",
+      "alternatives": [
+        {
+          "elements": [
+            [
+              "token",
+              {
+                "name": "LETTER"
+
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "INT": {
+      "name": "INT",
+      "alternatives": [
+        {
+          "elements": [
+
+          ]
+        }
+      ]
+    },
+    "FLOAT": {
+      "name": "FLOAT",
+      "alternatives": [
+        {
+          "elements": [
+            [
+              "token",
+              {
+                "name": "'.'"
+
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "WS": {
+      "name": "WS",
+      "alternatives": [
+        {
+          "elements": [
+
+          ]
+        }
+      ]
+    },
+    "COMMENT": {
+      "name": "COMMENT",
+      "alternatives": [
+        {
+          "elements": [
+
+          ]
+        }
+      ]
+    },
+    "LINE_COMMENT": {
+      "name": "LINE_COMMENT",
+      "alternatives": [
+        {
+          "elements": [
+
+          ]
+        }
+      ]
+    }
+  },
+  "tokenNameToTypeMap": {
+    "EOF": -1,
+    "IF": 1,
+    "WHILE": 2,
+    "FOR": 3,
+    "ID": 4,
+    "INT": 5,
+    "FLOAT": 6,
+    "WS": 7,
+    "COMMENT": 8,
+    "LINE_COMMENT": 9
+  },
+  "stringLiteralToTypeMap": {
+    "'if'": 1,
+    "'while'": 2,
+    "'for'": 3
+  }
+
+}

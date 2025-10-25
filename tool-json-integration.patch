@@ -1,0 +1,36 @@
+--- a/tool/src/org/antlr/v4/Tool.java
++++ b/tool/src/org/antlr/v4/Tool.java
+@@ -108,6 +108,7 @@ public class Tool {
+     public boolean force_atn = false;
+     public boolean log = false;
+ 	public boolean gen_listener = true;
++	public boolean export_json = false;
+ 	public boolean gen_visitor = false;
+ 	public boolean gen_split_parser = false;
+ 	public boolean gen_dependencies = false;
+@@ -130,6 +131,7 @@ public class Tool {
+ 		new Option("gen_dependencies",            "-depend", "generate file dependencies"),
+ 		new Option("gen_split_parser",           "-split-parser", "generate separate files for parser serialized DFA and context classes"),
+ 		new Option("gen_split_parser",           "-no-split-parser", "generate parser serialized DFA and context classes locally (default)"),
++		new Option("export_json",                "-json", "export grammar structure as JSON"),
+ 		new Option("",                            "-D<option>=value", "set/override a grammar-level option"),
+ 		new Option("warnings_are_errors",         "-Werror", "treat warnings as errors"),
+ 		new Option("launch_ST_inspector",         "-XdbgST", "launch StringTemplate visualizer on generated code"),
+@@ -319,6 +321,17 @@ public class Tool {
+ 				System.out.println(dep.getDependencies().render());
+ 
+ 			}
++			else if ( export_json ) {
++				// Export grammar as JSON
++				GrammarJSONExporter exporter = new GrammarJSONExporter();
++				String json = exporter.exportGrammar(g);
++				
++				String outputFileName = getOutputFileName(g.fileName, ".json");
++				try (java.io.FileWriter writer = new java.io.FileWriter(outputFileName)) {
++					writer.write(json);
++					System.out.println("Grammar exported to " + outputFileName);
++				}
++			}
+ 			else if (errMgr.getNumErrors() == 0) {
+ 				process(g, true);
+ 			}

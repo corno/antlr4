@@ -1,0 +1,134 @@
+(
+  'name': 'Simple'
+  'fileName': 'test-grammars/Simple.g4'
+  'type': | combined (
+    'implicitLexer': (
+      'name': 'SimpleLexer'
+      'fileName': 'test-grammars/Simple.g4'
+      'type': | lexer ()
+      'rules': (
+        'T__0': (
+          'name': 'T__0'
+          'alternatives': (
+            (
+              'elements': (
+                | token (
+                  'name': 's'
+                )
+              )
+            )
+          )
+        )
+        'T__1': (
+          'name': 'T__1'
+          'alternatives': (
+            (
+              'elements': (
+                | token (
+                  'name': 'sdfafsd'
+                )
+              )
+            )
+          )
+        )
+        'T__2': (
+          'name': 'T__2'
+          'alternatives': (
+            (
+              'elements': (
+                | token (
+                  'name': 'sassf'
+                )
+              )
+            )
+          )
+        )
+        'NUMBER': (
+          'name': 'NUMBER'
+          'alternatives': (
+            (
+              'elements': ()
+            )
+          )
+        )
+        'WS': (
+          'name': 'WS'
+          'alternatives': (
+            (
+              'elements': ()
+            )
+          )
+        )
+      )
+      'tokenNameToTypeMap': (
+        'EOF': -1
+        'T__0': 1
+        'T__1': 2
+        'T__2': 3
+        'NUMBER': 4
+        'WS': 5
+      )
+      'stringLiteralToTypeMap': (
+        ''+'': 1
+        ''('': 2
+        '')'': 3
+      )
+    )
+  )
+  'rules': (
+    'expr': (
+      'name': 'expr'
+      'alternatives': (
+        (
+          'elements': (
+            | block (
+              'alternatives': ()
+            )
+          )
+          'actions': (
+            '{}'
+            '{precpred(_ctx, 2)}?'
+          )
+        )
+      )
+    )
+    'term': (
+      'name': 'term'
+      'alternatives': (
+        (
+          'elements': (
+            | token (
+              'name': 'asdfsdf'
+            )
+            | rule (
+              'name': 'expr'
+            )
+            | token (
+              'name': '\')\''
+            )
+          )
+        )
+        (
+          'elements': (
+            | token (
+              'name': 'NUMBER'
+            )
+          )
+        )
+      )
+    )
+  )
+  'tokenNameToTypeMap': (
+    'EOF': -1
+    'T__0': 1
+    'T__1': 2
+    'T__2': 3
+    'NUMBER': 4
+    'WS': 5
+  )
+  'stringLiteralToTypeMap': (
+    ''+'': 1
+    ''('': 2
+    '')'': 3
+  )
+)

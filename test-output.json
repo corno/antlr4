@@ -1,0 +1,346 @@
+{
+  "name": "TestCalc",
+  "fileName": "tool/test/TestCalc.g4",
+  "type": [
+    "combined",
+    {
+      "implicitLexer": {
+        "name": "TestCalcLexer",
+        "fileName": "tool/test/TestCalc.g4",
+        "type": [
+          "lexer",
+          {
+          }
+        ],
+        "rules": {
+          "T__0": {
+            "name": "T__0",
+            "alternatives": [
+              {
+                "elements": [
+                  [
+                    "token",
+                    {
+                      "name": "'+'"
+
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          "T__1": {
+            "name": "T__1",
+            "alternatives": [
+              {
+                "elements": [
+                  [
+                    "token",
+                    {
+                      "name": "'-'"
+
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          "T__2": {
+            "name": "T__2",
+            "alternatives": [
+              {
+                "elements": [
+                  [
+                    "token",
+                    {
+                      "name": "'*'"
+
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          "T__3": {
+            "name": "T__3",
+            "alternatives": [
+              {
+                "elements": [
+                  [
+                    "token",
+                    {
+                      "name": "'/'"
+
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          "T__4": {
+            "name": "T__4",
+            "alternatives": [
+              {
+                "elements": [
+                  [
+                    "token",
+                    {
+                      "name": "'('"
+
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          "T__5": {
+            "name": "T__5",
+            "alternatives": [
+              {
+                "elements": [
+                  [
+                    "token",
+                    {
+                      "name": "')'"
+
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          "NUMBER": {
+            "name": "NUMBER",
+            "alternatives": [
+              {
+                "elements": [
+                  [
+                    "token",
+                    {
+                      "name": "'.'"
+
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          "ID": {
+            "name": "ID",
+            "alternatives": [
+              {
+                "elements": [
+
+                ]
+              }
+            ]
+          },
+          "WS": {
+            "name": "WS",
+            "alternatives": [
+              {
+                "elements": [
+
+                ]
+              }
+            ]
+          }
+        },
+        "tokenNameToTypeMap": {
+          "EOF": -1,
+          "T__0": 1,
+          "T__1": 2,
+          "T__2": 3,
+          "T__3": 4,
+          "T__4": 5,
+          "T__5": 6,
+          "NUMBER": 7,
+          "ID": 8,
+          "WS": 9
+        },
+        "stringLiteralToTypeMap": {
+          "'+'": 1,
+          "'-'": 2,
+          "'*'": 3,
+          "'/'": 4,
+          "'('": 5,
+          "')'": 6
+        }
+
+      }
+    }
+  ],
+  "rules": {
+    "expr": {
+      "name": "expr",
+      "alternatives": [
+        {
+          "elements": [
+            [
+              "token",
+              {
+                "name": "'+'"
+
+              }
+            ],
+            [
+              "token",
+              {
+                "name": "'-'"
+
+              }
+            ],
+            [
+              "rule",
+              {
+                "name": "term"
+
+              }
+            ],
+            [
+              "rule",
+              {
+                "name": "term"
+
+              }
+            ],
+            [
+              "rule",
+              {
+                "name": "term"
+
+              }
+            ]
+          ],
+          "actions": ["{}", "{precpred(_ctx, 3)}?", "{precpred(_ctx, 2)}?"]
+
+        }
+      ]
+    },
+    "term": {
+      "name": "term",
+      "alternatives": [
+        {
+          "elements": [
+            [
+              "token",
+              {
+                "name": "'*'"
+
+              }
+            ],
+            [
+              "token",
+              {
+                "name": "'/'"
+
+              }
+            ],
+            [
+              "rule",
+              {
+                "name": "factor"
+
+              }
+            ],
+            [
+              "rule",
+              {
+                "name": "factor"
+
+              }
+            ],
+            [
+              "rule",
+              {
+                "name": "factor"
+
+              }
+            ]
+          ],
+          "actions": ["{}", "{precpred(_ctx, 3)}?", "{precpred(_ctx, 2)}?"]
+
+        }
+      ]
+    },
+    "factor": {
+      "name": "factor",
+      "alternatives": [
+        {
+          "elements": [
+            [
+              "token",
+              {
+                "name": "'('"
+
+              }
+            ],
+            [
+              "token",
+              {
+                "name": "')'"
+
+              }
+            ],
+            [
+              "rule",
+              {
+                "name": "expr"
+
+              }
+            ]
+          ],
+          "label": "ParenFactor"
+
+        },
+        {
+          "elements": [
+            [
+              "token",
+              {
+                "name": "NUMBER"
+
+              }
+            ]
+          ],
+          "label": "NumberFactor"
+
+        },
+        {
+          "elements": [
+            [
+              "token",
+              {
+                "name": "ID"
+
+              }
+            ]
+          ],
+          "label": "IdFactor"
+
+        }
+      ]
+    }
+  },
+  "tokenNameToTypeMap": {
+    "EOF": -1,
+    "T__0": 1,
+    "T__1": 2,
+    "T__2": 3,
+    "T__3": 4,
+    "T__4": 5,
+    "T__5": 6,
+    "NUMBER": 7,
+    "ID": 8,
+    "WS": 9
+  },
+  "stringLiteralToTypeMap": {
+    "'+'": 1,
+    "'-'": 2,
+    "'*'": 3,
+    "'/'": 4,
+    "'('": 5,
+    "')'": 6
+  }
+
+}
