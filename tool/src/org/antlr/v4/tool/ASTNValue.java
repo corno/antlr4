@@ -91,6 +91,24 @@ public class ASTNValue {
         }
     }
     
+    public static class BooleanValue extends Value {
+        private final boolean value;
+        
+        public BooleanValue(boolean value) {
+            this.value = value;
+        }
+        
+        @Override
+        public String serialize(int indentLevel) {
+            return Boolean.toString(value);
+        }
+        
+        @Override
+        public String serializeAstn(int indentLevel) {
+            return Boolean.toString(value);
+        }
+    }
+    
     public static class NumberValue extends Value {
         private final Number value;
         
@@ -122,6 +140,10 @@ public class ASTNValue {
         
         public void put(String key, Number value) {
             properties.put(key, new NumberValue(value));
+        }
+        
+        public void put(String key, boolean value) {
+            properties.put(key, new BooleanValue(value));
         }
         
         @Override
@@ -178,6 +200,10 @@ public class ASTNValue {
         
         public void put(String key, Number value) {
             entries.put(key, new NumberValue(value));
+        }
+        
+        public void put(String key, boolean value) {
+            entries.put(key, new BooleanValue(value));
         }
         
         @Override

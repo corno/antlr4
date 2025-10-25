@@ -5,14 +5,16 @@ import java.io.IOException;
 
 /**
  * Command-line tool to convert ANTLR grammar files to JSON or ASTN format.
+ * Generates both AST and ATN representations as separate files.
  * 
  * Usage:
- *   java GrammarToJSON [--json] input.g4 [output.json]
+ *   java GrammarToJSON [--json] input.g4 [output.base]
  * 
  * Options:
- *   --json      Output in JSON format (default is ASTN format)
- *   input.g4    ANTLR grammar file to convert
- *   output.json Output file (optional, defaults to stdout)
+ *   --json        Output in JSON format (default is ASTN format)
+ *   input.g4      ANTLR grammar file to convert
+ *   output.base   Output base path (generates .ast.astn and .atn.astn files)
+ *                 If not provided, outputs to stdout (AST only for compatibility)
  */
 public class GrammarToJSON {
     
@@ -52,21 +54,41 @@ public class GrammarToJSON {
                 System.exit(1);
             }
             
-            // Convert to JSON or ASTN
-            GrammarJSONExporterDOM exporter = new GrammarJSONExporterDOM();
-            String output = jsonFormat ? 
-                exporter.exportGrammar(grammar) : 
-                exporter.exportGrammarAstn(grammar);
+            // Create exporters
+            GrammarJSONExporterDOM astExporter = new GrammarJSONExporterDOM();
+            GrammarATNExporterDOM atnExporter = new GrammarATNExporterDOM();
             
-            // Output the result
+            // Generate outputs
+            String astOutput = jsonFormat ? 
+                astExporter.exportGrammar(grammar) : 
+                astExporter.exportGrammarAstn(grammar);
+            
+            String atnOutput = jsonFormat ? 
+                atnExporter.exportATN(grammar) : 
+                atnExporter.exportATNAstn(grammar);
+            
+            // Output the results
             if (outputFile != null) {
-                try (FileWriter writer = new FileWriter(outputFile)) {
-                    writer.write(output);
+                String extension = jsonFormat ? ".json" : ".astn";
+                String astFile = outputFile.replaceAll("\\.[^.]*$", "") + ".ast" + extension;
+                String atnFile = outputFile.replaceAll("\\.[^.]*$", "") + ".atn" + extension;
+                
+                // Write AST file
+                try (FileWriter writer = new FileWriter(astFile)) {
+                    writer.write(astOutput);
                     String format = jsonFormat ? "JSON" : "ASTN";
-                    System.out.println("Grammar exported to " + outputFile + " in " + format + " format");
+                    System.out.println("Grammar AST exported to " + astFile + " in " + format + " format");
+                }
+                
+                // Write ATN file
+                try (FileWriter writer = new FileWriter(atnFile)) {
+                    writer.write(atnOutput);
+                    String format = jsonFormat ? "JSON" : "ASTN";
+                    System.out.println("Grammar ATN exported to " + atnFile + " in " + format + " format");
                 }
             } else {
-                System.out.println(output);
+                // For backward compatibility, output AST to stdout when no output file specified
+                System.out.println(astOutput);
             }
             
         } catch (Exception e) {
@@ -77,10 +99,11 @@ public class GrammarToJSON {
     }
     
     private static void printUsage() {
-        System.err.println("Usage: java GrammarToJSON [--json] input.g4 [output.file]");
+        System.err.println("Usage: java GrammarToJSON [--json] input.g4 [output.base]");
         System.err.println("Options:");
-        System.err.println("  --json      Output in JSON format (default is ASTN format)");
-        System.err.println("  input.g4    ANTLR grammar file to convert");
-        System.err.println("  output.file Output file (optional, defaults to stdout)");
+        System.err.println("  --json        Output in JSON format (default is ASTN format)");
+        System.err.println("  input.g4      ANTLR grammar file to convert");
+        System.err.println("  output.base   Output base path (generates .ast.astn and .atn.astn files)");
+        System.err.println("                If not provided, outputs AST to stdout for compatibility");
     }
 }

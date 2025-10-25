@@ -1,0 +1,283 @@
+(
+  'grammarName': "Simple"
+  'grammarType': "parser"
+  'maxTokenType': 5
+  'states': [
+    | 'ruleStart' (
+      'stateNumber': 0
+      'ruleIndex': 0
+      'transitions': [
+        | 'epsilon' (
+          'target': 4
+        )
+      ]
+      'isLeftRecursiveRule': true
+      'stopStateNumber': 1
+    )
+    | 'ruleStop' (
+      'stateNumber': 1
+      'ruleIndex': 0
+      'transitions': [
+        | 'epsilon' (
+          'target': 17
+        )
+      ]
+    )
+    | 'ruleStart' (
+      'stateNumber': 2
+      'ruleIndex': 1
+      'transitions': [
+        | 'epsilon' (
+          'target': 20
+        )
+      ]
+      'isLeftRecursiveRule': false
+      'stopStateNumber': 3
+    )
+    | 'ruleStop' (
+      'stateNumber': 3
+      'ruleIndex': 1
+      'transitions': [
+        | 'epsilon' (
+          'target': 6
+        )
+        | 'epsilon' (
+          'target': 11
+        )
+      ]
+    )
+    | 'basic' (
+      'stateNumber': 4
+      'ruleIndex': 0
+      'transitions': [
+        | 'action' (
+          'target': 5
+          'ruleIndex': 0
+          'actionIndex': -1
+          'isCtxDependent': false
+        )
+      ]
+    )
+    | 'basic' (
+      'stateNumber': 5
+      'ruleIndex': 0
+      'transitions': [
+        | 'rule' (
+          'target': 2
+          'ruleIndex': 1
+          'precedence': 0
+          'followState': 6
+        )
+      ]
+    )
+    | 'basic' (
+      'stateNumber': 6
+      'ruleIndex': 0
+      'transitions': [
+        | 'epsilon' (
+          'target': 12
+        )
+      ]
+    )
+    | 'basic' (
+      'stateNumber': 7
+      'ruleIndex': 0
+      'transitions': [
+        | 'unknown' (
+          'target': 8
+        )
+      ]
+    )
+    | 'basic' (
+      'stateNumber': 8
+      'ruleIndex': 0
+      'transitions': [
+        | 'atom' (
+          'target': 9
+          'label': 1
+        )
+      ]
+    )
+    | 'basic' (
+      'stateNumber': 9
+      'ruleIndex': 0
+      'transitions': [
+        | 'rule' (
+          'target': 2
+          'ruleIndex': 1
+          'precedence': 0
+          'followState': 11
+        )
+      ]
+    )
+    | 'starBlockStart' (
+      'stateNumber': 10
+      'ruleIndex': 0
+      'transitions': [
+        | 'epsilon' (
+          'target': 7
+        )
+      ]
+      'decision': -1
+      'nonGreedy': false
+    )
+    | 'blockEnd' (
+      'stateNumber': 11
+      'ruleIndex': 0
+      'transitions': [
+        | 'epsilon' (
+          'target': 14
+        )
+      ]
+    )
+    | 'decision' (
+      'stateNumber': 12
+      'ruleIndex': 0
+      'transitions': [
+        | 'epsilon' (
+          'target': 10
+        )
+        | 'epsilon' (
+          'target': 13
+        )
+      ]
+      'decision': 0
+      'nonGreedy': false
+    )
+    | 'loopEnd' (
+      'stateNumber': 13
+      'ruleIndex': 0
+      'transitions': [
+        | 'epsilon' (
+          'target': 1
+        )
+      ]
+    )
+    | 'starLoopback' (
+      'stateNumber': 14
+      'ruleIndex': 0
+      'transitions': [
+        | 'epsilon' (
+          'target': 12
+        )
+      ]
+    )
+    | 'basic' (
+      'stateNumber': 15
+      'ruleIndex': 1
+      'transitions': [
+        | 'atom' (
+          'target': 16
+          'label': 2
+        )
+      ]
+    )
+    | 'basic' (
+      'stateNumber': 16
+      'ruleIndex': 1
+      'transitions': [
+        | 'rule' (
+          'target': 0
+          'ruleIndex': 0
+          'precedence': 0
+          'followState': 17
+        )
+      ]
+    )
+    | 'basic' (
+      'stateNumber': 17
+      'ruleIndex': 1
+      'transitions': [
+        | 'atom' (
+          'target': 18
+          'label': 3
+        )
+      ]
+    )
+    | 'basic' (
+      'stateNumber': 18
+      'ruleIndex': 1
+      'transitions': [
+        | 'epsilon' (
+          'target': 21
+        )
+      ]
+    )
+    | 'basic' (
+      'stateNumber': 19
+      'ruleIndex': 1
+      'transitions': [
+        | 'atom' (
+          'target': 21
+          'label': 4
+        )
+      ]
+    )
+    | 'blockStart' (
+      'stateNumber': 20
+      'ruleIndex': 1
+      'transitions': [
+        | 'epsilon' (
+          'target': 15
+        )
+        | 'epsilon' (
+          'target': 19
+        )
+      ]
+      'decision': 1
+      'nonGreedy': false
+    )
+    | 'blockEnd' (
+      'stateNumber': 21
+      'ruleIndex': 1
+      'transitions': [
+        | 'epsilon' (
+          'target': 3
+        )
+      ]
+    )
+    | 'basic' (
+      'stateNumber': 22
+      'ruleIndex': 1
+      'transitions': []
+    )
+  ]
+  'decisionToState': [
+    (
+      'decisionIndex': 0
+      'stateNumber': 12
+      'decision': 0
+      'nonGreedy': false
+    )
+    (
+      'decisionIndex': 1
+      'stateNumber': 20
+      'decision': 1
+      'nonGreedy': false
+    )
+  ]
+  'ruleToStartState': [
+    (
+      'ruleIndex': 0
+      'startStateNumber': 0
+      'ruleName': "expr"
+    )
+    (
+      'ruleIndex': 1
+      'startStateNumber': 2
+      'ruleName': "term"
+    )
+  ]
+  'ruleToStopState': [
+    (
+      'ruleIndex': 0
+      'stopStateNumber': 1
+      'ruleName': "expr"
+    )
+    (
+      'ruleIndex': 1
+      'stopStateNumber': 3
+      'ruleName': "term"
+    )
+  ]
+)
