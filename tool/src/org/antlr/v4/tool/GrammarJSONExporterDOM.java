@@ -114,7 +114,7 @@ public class GrammarJSONExporterDOM {
         }
     }
     
-    public static class ObjectValue extends Value {
+    public static class VerboseTypeValue extends Value {
         private final Map<String, Value> properties = new LinkedHashMap<>();
         
         public void put(String key, Value value) {
@@ -170,6 +170,62 @@ public class GrammarJSONExporterDOM {
         }
     }
     
+    public static class DictionaryValue extends Value {
+        private final Map<String, Value> entries = new LinkedHashMap<>();
+        
+        public void put(String key, Value value) {
+            entries.put(key, value);
+        }
+        
+        public void put(String key, String value) {
+            entries.put(key, new StringValue(value));
+        }
+        
+        public void put(String key, Number value) {
+            entries.put(key, new NumberValue(value));
+        }
+        
+        @Override
+        public String serialize(int indentLevel) {
+            if (entries.isEmpty()) {
+                return "{}";
+            }
+            
+            StringBuilder sb = new StringBuilder();
+            sb.append("{\n");
+            int i = 0;
+            for (Map.Entry<String, Value> entry : entries.entrySet()) {
+                if (i > 0) sb.append(",\n");
+                sb.append(indent(indentLevel + 1));
+                sb.append("\"").append(entry.getKey()).append("\": ");
+                sb.append(entry.getValue().serialize(indentLevel + 1));
+                i++;
+            }
+            sb.append("\n").append(indent(indentLevel)).append("}");
+            return sb.toString();
+        }
+        
+        @Override
+        public String serializeAstn(int indentLevel) {
+            if (entries.isEmpty()) {
+                return "{}";
+            }
+            
+            StringBuilder sb = new StringBuilder();
+            sb.append("{\n");
+            int i = 0;
+            for (Map.Entry<String, Value> entry : entries.entrySet()) {
+                if (i > 0) sb.append("\n");  // No commas in ASTN
+                sb.append(indent(indentLevel + 1));
+                sb.append("`").append(entry.getKey()).append("`: ");  // Backticks for dictionary keys
+                sb.append(entry.getValue().serializeAstn(indentLevel + 1));
+                i++;
+            }
+            sb.append("\n").append(indent(indentLevel)).append("}");
+            return sb.toString();
+        }
+    }
+    
     public static class StateValue extends Value {
         private final String name;
         private final Value value;
@@ -217,8 +273,8 @@ public class GrammarJSONExporterDOM {
     /**
      * Convert Grammar to Value DOM
      */
-    private ObjectValue convertGrammar(Grammar grammar) {
-        ObjectValue obj = new ObjectValue();
+    private VerboseTypeValue convertGrammar(Grammar grammar) {
+        VerboseTypeValue obj = new VerboseTypeValue();
         
         // Basic properties
         obj.put("name", grammar.name);
@@ -229,18 +285,18 @@ public class GrammarJSONExporterDOM {
         // Grammar type (tagged union)
         obj.put("type", convertGrammarType(grammar));
         
-        // Rules
-        ObjectValue rulesObj = new ObjectValue();
+        // Rules (dictionary)
+        DictionaryValue rulesDict = new DictionaryValue();
         for (Rule rule : grammar.rules.values()) {
-            rulesObj.put(rule.name, convertRule(rule));
+            rulesDict.put(rule.name, convertRule(rule));
         }
-        obj.put("rules", rulesObj);
+        obj.put("rules", rulesDict);
         
-        // Token vocabulary
+        // Token vocabulary (dictionaries)
         obj.put("tokenNameToTypeMap", convertStringToNumberMap(grammar.tokenNameToTypeMap));
         obj.put("stringLiteralToTypeMap", convertStringToNumberMap(grammar.stringLiteralToTypeMap));
         
-        // Named actions (optional)
+        // Named actions (optional dictionary)
         if (grammar.namedActions != null && !grammar.namedActions.isEmpty()) {
             obj.put("namedActions", convertActionMap(grammar.namedActions));
         }
@@ -261,20 +317,20 @@ public class GrammarJSONExporterDOM {
      * Convert grammar type to StateValue (tagged union)
      */
     private StateValue convertGrammarType(Grammar grammar) {
-        ObjectValue typeData = new ObjectValue();
+        VerboseTypeValue typeData = new VerboseTypeValue();
         
         if (grammar.isLexer()) {
             // Add lexer-specific data like modes if available
             if (grammar instanceof LexerGrammar) {
                 LexerGrammar lexer = (LexerGrammar) grammar;
                 if (lexer.modes.size() > 1) { // DEFAULT_MODE is always present
-                    ObjectValue modesObj = new ObjectValue();
+                    DictionaryValue modesDict = new DictionaryValue();
                     for (String mode : lexer.modes.keySet()) {
                         ArrayValue modeRules = new ArrayValue();
                         // TODO: get actual rules for mode
-                        modesObj.put(mode, modeRules);
+                        modesDict.put(mode, modeRules);
                     }
-                    typeData.put("modes", modesObj);
+                    typeData.put("modes", modesDict);
                 }
             }
             return new StateValue("lexer", typeData);
@@ -292,10 +348,10 @@ public class GrammarJSONExporterDOM {
     }
     
     /**
-     * Convert Rule to ObjectValue
+     * Convert Rule to VerboseTypeValue
      */
-    private ObjectValue convertRule(Rule rule) {
-        ObjectValue obj = new ObjectValue();
+    private VerboseTypeValue convertRule(Rule rule) {
+        VerboseTypeValue obj = new VerboseTypeValue();
         
         obj.put("name", rule.name);
         
@@ -327,7 +383,7 @@ public class GrammarJSONExporterDOM {
         }
         obj.put("alternatives", alternativesArray);
         
-        // Named actions
+        // Named actions (dictionary)
         if (rule.namedActions != null && !rule.namedActions.isEmpty()) {
             obj.put("namedActions", convertActionMap(rule.namedActions));
         }
@@ -345,10 +401,10 @@ public class GrammarJSONExporterDOM {
     }
     
     /**
-     * Convert Alternative to ObjectValue
+     * Convert Alternative to VerboseTypeValue
      */
-    private ObjectValue convertAlternative(Alternative alt) {
-        ObjectValue obj = new ObjectValue();
+    private VerboseTypeValue convertAlternative(Alternative alt) {
+        VerboseTypeValue obj = new VerboseTypeValue();
         
         // Elements - walk the AST to get proper order and structure
         ArrayValue elementsArray = new ArrayValue();
@@ -464,7 +520,7 @@ public class GrammarJSONExporterDOM {
     }
     
     private StateValue convertTokenElementFromAST(GrammarAST ast) {
-        ObjectValue data = new ObjectValue();
+        VerboseTypeValue data = new VerboseTypeValue();
         data.put("name", ast.getText());
         // TODO: Extract label if present
         return new StateValue("token", data);
@@ -478,7 +534,7 @@ public class GrammarJSONExporterDOM {
     }
     
     private StateValue convertRuleElementFromAST(GrammarAST ast) {
-        ObjectValue data = new ObjectValue();
+        VerboseTypeValue data = new VerboseTypeValue();
         data.put("name", ast.getText());
         // TODO: Extract arguments and label if present
         return new StateValue("rule", data);
@@ -488,7 +544,7 @@ public class GrammarJSONExporterDOM {
      * Convert action element: ["action", {...}]
      */
     private StateValue convertActionElement(GrammarAST ast) {
-        ObjectValue data = new ObjectValue();
+        VerboseTypeValue data = new VerboseTypeValue();
         data.put("code", ast.getText());
         return new StateValue("action", data);
     }
@@ -497,7 +553,7 @@ public class GrammarJSONExporterDOM {
      * Convert predicate element: ["predicate", {...}]
      */
     private StateValue convertPredicateElement(GrammarAST ast) {
-        ObjectValue data = new ObjectValue();
+        VerboseTypeValue data = new VerboseTypeValue();
         data.put("code", ast.getText());
         return new StateValue("predicate", data);
     }
@@ -506,7 +562,7 @@ public class GrammarJSONExporterDOM {
      * Convert set element: ["set", {...}]
      */
     private StateValue convertSetElement(GrammarAST ast) {
-        ObjectValue data = new ObjectValue();
+        VerboseTypeValue data = new VerboseTypeValue();
         
         // Convert child elements
         ArrayValue childElements = new ArrayValue();
@@ -528,7 +584,7 @@ public class GrammarJSONExporterDOM {
      * Convert range element: ["range", {...}]
      */
     private StateValue convertRangeElement(GrammarAST ast) {
-        ObjectValue data = new ObjectValue();
+        VerboseTypeValue data = new VerboseTypeValue();
         
         if (ast.getChildCount() >= 2) {
             data.put("from", ast.getChild(0).toString());
@@ -542,7 +598,7 @@ public class GrammarJSONExporterDOM {
      * Convert wildcard element: ["wildcard", {}]
      */
     private StateValue convertWildcardElement() {
-        ObjectValue data = new ObjectValue();
+        VerboseTypeValue data = new VerboseTypeValue();
         return new StateValue("wildcard", data);
     }
     
@@ -550,7 +606,7 @@ public class GrammarJSONExporterDOM {
      * Convert block element: ["block", {...}]
      */
     private StateValue convertBlockElement(GrammarAST ast) {
-        ObjectValue data = new ObjectValue();
+        VerboseTypeValue data = new VerboseTypeValue();
         
         // Convert alternatives within the block
         ArrayValue alternatives = new ArrayValue();
@@ -561,7 +617,7 @@ public class GrammarJSONExporterDOM {
                 GrammarAST childAST = (GrammarAST) child;
                 if (childAST.getType() == ANTLRParser.ALT) {
                     // This is an alternative - convert it
-                    ObjectValue altObj = new ObjectValue();
+                    VerboseTypeValue altObj = new VerboseTypeValue();
                     ArrayValue elements = new ArrayValue();
                     
                     // Process all children of the ALT node
@@ -590,11 +646,11 @@ public class GrammarJSONExporterDOM {
      * Convert EBNF element: wraps child element with EBNF operator info
      */
     private StateValue convertEBNFElement(GrammarAST ebnfNode, GrammarAST child) {
-        ObjectValue data = new ObjectValue();
+        VerboseTypeValue data = new VerboseTypeValue();
         
         // Create a single alternative containing the child element
         ArrayValue alternatives = new ArrayValue();
-        ObjectValue alternative = new ObjectValue();
+        VerboseTypeValue alternative = new VerboseTypeValue();
         ArrayValue elements = new ArrayValue();
         
         Value childValue = convertElementFromAST(child);
@@ -648,28 +704,28 @@ public class GrammarJSONExporterDOM {
     }
     
     /**
-     * Convert Map<String, Integer> to ObjectValue
+     * Convert Map<String, Integer> to DictionaryValue
      */
-    private ObjectValue convertStringToNumberMap(Map<String, Integer> map) {
-        ObjectValue obj = new ObjectValue();
+    private DictionaryValue convertStringToNumberMap(Map<String, Integer> map) {
+        DictionaryValue dict = new DictionaryValue();
         if (map != null) {
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
-                obj.put(entry.getKey(), entry.getValue());
+                dict.put(entry.getKey(), entry.getValue());
             }
         }
-        return obj;
+        return dict;
     }
     
     /**
-     * Convert Map<String, ActionAST> to ObjectValue
+     * Convert Map<String, ActionAST> to DictionaryValue
      */
-    private ObjectValue convertActionMap(Map<String, ActionAST> map) {
-        ObjectValue obj = new ObjectValue();
+    private DictionaryValue convertActionMap(Map<String, ActionAST> map) {
+        DictionaryValue dict = new DictionaryValue();
         if (map != null) {
             for (Map.Entry<String, ActionAST> entry : map.entrySet()) {
-                obj.put(entry.getKey(), entry.getValue().getText());
+                dict.put(entry.getKey(), entry.getValue().getText());
             }
         }
-        return obj;
+        return dict;
     }
 }

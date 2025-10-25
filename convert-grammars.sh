@@ -18,6 +18,23 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Signal handling for graceful termination
+interrupted=false
+cleanup() {
+    interrupted=true
+    print_status $YELLOW "\nReceived interrupt signal. Cleaning up..."
+    print_status $BLUE "Processed $total_files files before interruption."
+    print_status $GREEN "Successfully converted: $converted_files files"
+    if [ $failed_files -gt 0 ]; then
+        print_status $RED "Failed conversions: $failed_files files"
+    fi
+    print_status $YELLOW "Partial results saved in: $OUTPUT_DIR"
+    exit 130  # Exit code for Ctrl+C
+}
+
+# Trap signals for graceful shutdown
+trap cleanup SIGINT SIGTERM
+
 # Function to print colored output
 print_status() {
     local color=$1
@@ -52,8 +69,16 @@ total_files=0
 converted_files=0
 failed_files=0
 
+# Disable exit-on-error for the main loop so we can handle individual failures
+set +e
+
 # Find all .g4 files and process them
 while IFS= read -r -d '' grammar_file; do
+    # Check if we received an interrupt signal
+    if [ "$interrupted" = true ]; then
+        break
+    fi
+    
     # Get relative path from source directory
     relative_path="${grammar_file#$SOURCE_DIR/}"
     
@@ -66,24 +91,29 @@ while IFS= read -r -d '' grammar_file; do
     
     total_files=$((total_files + 1))
     
-    print_status $YELLOW "Processing: $relative_path"
+    print_status $YELLOW "[$total_files] Processing: $relative_path"
     
     # Copy the original .g4 file
     g4_output_file="$OUTPUT_DIR/$relative_path"
     cp "$grammar_file" "$g4_output_file"
     
-    # Convert grammar to ASTN format
-    if java -cp "$JAR_PATH" "$CONVERTER_CLASS" "$grammar_file" "$output_file" 2>/dev/null; then
+    # Convert grammar to ASTN format with timeout and better error handling
+    if timeout 30s java -cp "$JAR_PATH" "$CONVERTER_CLASS" "$grammar_file" "$output_file" 2>/dev/null; then
         converted_files=$((converted_files + 1))
         print_status $GREEN "  ✓ Converted to: ${output_file#./}"
         print_status $GREEN "  ✓ Copied to: ${g4_output_file#./}"
     else
+        exit_code=$?
         failed_files=$((failed_files + 1))
-        print_status $RED "  ✗ Failed to convert: $relative_path"
+        if [ $exit_code -eq 124 ]; then
+            print_status $RED "  ✗ Timeout (30s) converting: $relative_path"
+        else
+            print_status $RED "  ✗ Failed to convert: $relative_path"
+        fi
         print_status $GREEN "  ✓ Copied to: ${g4_output_file#./}"
         
         # Create empty file with error message for failed conversions
-        echo "# Conversion failed for $relative_path" > "$output_file"
+        echo "# Conversion failed for $relative_path (exit code: $exit_code)" > "$output_file"
     fi
     
 done < <(find "$SOURCE_DIR" -name "*.g4" -type f -print0)
