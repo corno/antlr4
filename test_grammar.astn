@@ -9,55 +9,71 @@
       'rules': (
         'T__0': (
           'name': 'T__0'
-          'alternatives': (
+          'alternatives': [
             (
-              'elements': (
+              'elements': [
                 | token (
-                  'name': 's'
+                  'name': '\'+\''
                 )
-              )
+              ]
             )
-          )
+          ]
         )
         'T__1': (
           'name': 'T__1'
-          'alternatives': (
+          'alternatives': [
             (
-              'elements': (
+              'elements': [
                 | token (
-                  'name': 'sdfafsd'
+                  'name': '\'(\''
                 )
-              )
+              ]
             )
-          )
+          ]
         )
         'T__2': (
           'name': 'T__2'
-          'alternatives': (
+          'alternatives': [
             (
-              'elements': (
+              'elements': [
                 | token (
-                  'name': 'sassf'
+                  'name': '\')\''
                 )
-              )
+              ]
             )
-          )
+          ]
         )
         'NUMBER': (
           'name': 'NUMBER'
-          'alternatives': (
+          'alternatives': [
             (
-              'elements': ()
+              'elements': [
+                | block (
+                  'alternatives': [
+                    (
+                      'elements': []
+                    )
+                  ]
+                )
+              ]
             )
-          )
+          ]
         )
         'WS': (
           'name': 'WS'
-          'alternatives': (
+          'alternatives': [
             (
-              'elements': ()
+              'elements': [
+                | block (
+                  'alternatives': [
+                    (
+                      'elements': []
+                    )
+                  ]
+                )
+              ]
             )
-          )
+          ]
         )
       )
       'tokenNameToTypeMap': (
@@ -78,27 +94,55 @@
   'rules': (
     'expr': (
       'name': 'expr'
-      'alternatives': (
+      'alternatives': [
         (
-          'elements': (
+          'elements': [
             | block (
-              'alternatives': ()
+              'alternatives': [
+                (
+                  'elements': [
+                    | action (
+                      'code': '{}'
+                    )
+                    | rule (
+                      'name': 'term'
+                    )
+                  ]
+                )
+              ]
             )
-          )
-          'actions': (
+            | block (
+              'alternatives': [
+                (
+                  'elements': [
+                    | predicate (
+                      'code': '{precpred(_ctx, 2)}?'
+                    )
+                    | token (
+                      'name': '\'+\''
+                    )
+                    | rule (
+                      'name': 'term'
+                    )
+                  ]
+                )
+              ]
+            )
+          ]
+          'actions': [
             '{}'
             '{precpred(_ctx, 2)}?'
-          )
+          ]
         )
-      )
+      ]
     )
     'term': (
       'name': 'term'
-      'alternatives': (
+      'alternatives': [
         (
-          'elements': (
+          'elements': [
             | token (
-              'name': 'asdfsdf'
+              'name': '\'(\''
             )
             | rule (
               'name': 'expr'
@@ -106,16 +150,16 @@
             | token (
               'name': '\')\''
             )
-          )
+          ]
         )
         (
-          'elements': (
+          'elements': [
             | token (
               'name': 'NUMBER'
             )
-          )
+          ]
         )
-      )
+      ]
     )
   )
   'tokenNameToTypeMap': (

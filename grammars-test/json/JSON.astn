@@ -1,0 +1,617 @@
+(
+  'name': 'JSON'
+  'fileName': '../grammars-v4/json/JSON.g4'
+  'type': | 'combined' (
+    'implicitLexer': (
+      'name': 'JSONLexer'
+      'fileName': '../grammars-v4/json/JSON.g4'
+      'type': | 'lexer' ()
+      'rules': (
+        'T__0': (
+          'name': 'T__0'
+          'alternatives': [
+            (
+              'elements': [
+                | 'token' (
+                  'name': '\'{\''
+                )
+              ]
+            )
+          ]
+        )
+        'T__1': (
+          'name': 'T__1'
+          'alternatives': [
+            (
+              'elements': [
+                | 'token' (
+                  'name': '\',\''
+                )
+              ]
+            )
+          ]
+        )
+        'T__2': (
+          'name': 'T__2'
+          'alternatives': [
+            (
+              'elements': [
+                | 'token' (
+                  'name': '\'}\''
+                )
+              ]
+            )
+          ]
+        )
+        'T__3': (
+          'name': 'T__3'
+          'alternatives': [
+            (
+              'elements': [
+                | 'token' (
+                  'name': '\':\''
+                )
+              ]
+            )
+          ]
+        )
+        'T__4': (
+          'name': 'T__4'
+          'alternatives': [
+            (
+              'elements': [
+                | 'token' (
+                  'name': '\'[\''
+                )
+              ]
+            )
+          ]
+        )
+        'T__5': (
+          'name': 'T__5'
+          'alternatives': [
+            (
+              'elements': [
+                | 'token' (
+                  'name': '\']\''
+                )
+              ]
+            )
+          ]
+        )
+        'T__6': (
+          'name': 'T__6'
+          'alternatives': [
+            (
+              'elements': [
+                | 'token' (
+                  'name': '\'true\''
+                )
+              ]
+            )
+          ]
+        )
+        'T__7': (
+          'name': 'T__7'
+          'alternatives': [
+            (
+              'elements': [
+                | 'token' (
+                  'name': '\'false\''
+                )
+              ]
+            )
+          ]
+        )
+        'T__8': (
+          'name': 'T__8'
+          'alternatives': [
+            (
+              'elements': [
+                | 'token' (
+                  'name': '\'null\''
+                )
+              ]
+            )
+          ]
+        )
+        'STRING': (
+          'name': 'STRING'
+          'alternatives': [
+            (
+              'elements': [
+                | 'token' (
+                  'name': '\'"\''
+                )
+                | 'block' (
+                  'alternatives': [
+                    (
+                      'elements': [
+                        | 'token' (
+                          'name': 'ESC'
+                        )
+                      ]
+                    )
+                    (
+                      'elements': [
+                        | 'token' (
+                          'name': 'SAFECODEPOINT'
+                        )
+                      ]
+                    )
+                  ]
+                )
+                | 'token' (
+                  'name': '\'"\''
+                )
+              ]
+            )
+          ]
+        )
+        'ESC': (
+          'name': 'ESC'
+          'modifiers': [
+            'fragment'
+          ]
+          'alternatives': [
+            (
+              'elements': [
+                | 'token' (
+                  'name': '\'\\\''
+                )
+                | 'block' (
+                  'alternatives': [
+                    (
+                      'elements': []
+                    )
+                    (
+                      'elements': [
+                        | 'token' (
+                          'name': 'UNICODE'
+                        )
+                      ]
+                    )
+                  ]
+                )
+              ]
+            )
+          ]
+        )
+        'UNICODE': (
+          'name': 'UNICODE'
+          'modifiers': [
+            'fragment'
+          ]
+          'alternatives': [
+            (
+              'elements': [
+                | 'token' (
+                  'name': '\'u\''
+                )
+                | 'token' (
+                  'name': 'HEX'
+                )
+                | 'token' (
+                  'name': 'HEX'
+                )
+                | 'token' (
+                  'name': 'HEX'
+                )
+                | 'token' (
+                  'name': 'HEX'
+                )
+              ]
+            )
+          ]
+        )
+        'HEX': (
+          'name': 'HEX'
+          'modifiers': [
+            'fragment'
+          ]
+          'alternatives': [
+            (
+              'elements': []
+            )
+          ]
+        )
+        'SAFECODEPOINT': (
+          'name': 'SAFECODEPOINT'
+          'modifiers': [
+            'fragment'
+          ]
+          'alternatives': [
+            (
+              'elements': [
+                | 'set' (
+                  'elements': []
+                )
+              ]
+            )
+          ]
+        )
+        'NUMBER': (
+          'name': 'NUMBER'
+          'alternatives': [
+            (
+              'elements': [
+                | 'block' (
+                  'alternatives': [
+                    (
+                      'elements': [
+                        | 'block' (
+                          'alternatives': [
+                            (
+                              'elements': [
+                                | 'token' (
+                                  'name': '\'-\''
+                                )
+                              ]
+                            )
+                          ]
+                        )
+                      ]
+                    )
+                  ]
+                  'ebnf': 'optional'
+                )
+                | 'token' (
+                  'name': 'INT'
+                )
+                | 'block' (
+                  'alternatives': [
+                    (
+                      'elements': [
+                        | 'block' (
+                          'alternatives': [
+                            (
+                              'elements': [
+                                | 'token' (
+                                  'name': '\'.\''
+                                )
+                                | 'block' (
+                                  'alternatives': [
+                                    (
+                                      'elements': []
+                                    )
+                                  ]
+                                )
+                              ]
+                            )
+                          ]
+                        )
+                      ]
+                    )
+                  ]
+                  'ebnf': 'optional'
+                )
+                | 'block' (
+                  'alternatives': [
+                    (
+                      'elements': [
+                        | 'block' (
+                          'alternatives': [
+                            (
+                              'elements': [
+                                | 'token' (
+                                  'name': 'EXP'
+                                )
+                              ]
+                            )
+                          ]
+                        )
+                      ]
+                    )
+                  ]
+                  'ebnf': 'optional'
+                )
+              ]
+            )
+          ]
+        )
+        'INT': (
+          'name': 'INT'
+          'modifiers': [
+            'fragment'
+          ]
+          'alternatives': [
+            (
+              'elements': [
+                | 'token' (
+                  'name': '\'0\''
+                )
+              ]
+            )
+            (
+              'elements': [
+                | 'block' (
+                  'alternatives': [
+                    (
+                      'elements': []
+                    )
+                  ]
+                )
+              ]
+            )
+          ]
+        )
+        'EXP': (
+          'name': 'EXP'
+          'modifiers': [
+            'fragment'
+          ]
+          'alternatives': [
+            (
+              'elements': [
+                | 'block' (
+                  'alternatives': [
+                    (
+                      'elements': [
+                        | 'block' (
+                          'alternatives': [
+                            (
+                              'elements': []
+                            )
+                          ]
+                        )
+                      ]
+                    )
+                  ]
+                  'ebnf': 'optional'
+                )
+                | 'block' (
+                  'alternatives': [
+                    (
+                      'elements': []
+                    )
+                  ]
+                )
+              ]
+            )
+          ]
+        )
+        'WS': (
+          'name': 'WS'
+          'alternatives': [
+            (
+              'elements': [
+                | 'block' (
+                  'alternatives': [
+                    (
+                      'elements': []
+                    )
+                  ]
+                )
+              ]
+            )
+          ]
+        )
+      )
+      'tokenNameToTypeMap': (
+        'EOF': -1
+        'T__0': 1
+        'T__1': 2
+        'T__2': 3
+        'T__3': 4
+        'T__4': 5
+        'T__5': 6
+        'T__6': 7
+        'T__7': 8
+        'T__8': 9
+        'STRING': 10
+        'NUMBER': 11
+        'WS': 12
+      )
+      'stringLiteralToTypeMap': (
+        ''{'': 1
+        '','': 2
+        ''}'': 3
+        '':'': 4
+        ''['': 5
+        '']'': 6
+        ''true'': 7
+        ''false'': 8
+        ''null'': 9
+      )
+    )
+  )
+  'rules': (
+    'json': (
+      'name': 'json'
+      'alternatives': [
+        (
+          'elements': [
+            | 'rule' (
+              'name': 'value'
+            )
+            | 'token' (
+              'name': 'EOF'
+            )
+          ]
+        )
+      ]
+    )
+    'obj': (
+      'name': 'obj'
+      'alternatives': [
+        (
+          'elements': [
+            | 'token' (
+              'name': '\'{\''
+            )
+            | 'rule' (
+              'name': 'pair'
+            )
+            | 'block' (
+              'alternatives': [
+                (
+                  'elements': [
+                    | 'token' (
+                      'name': '\',\''
+                    )
+                    | 'rule' (
+                      'name': 'pair'
+                    )
+                  ]
+                )
+              ]
+            )
+            | 'token' (
+              'name': '\'}\''
+            )
+          ]
+        )
+        (
+          'elements': [
+            | 'token' (
+              'name': '\'{\''
+            )
+            | 'token' (
+              'name': '\'}\''
+            )
+          ]
+        )
+      ]
+    )
+    'pair': (
+      'name': 'pair'
+      'alternatives': [
+        (
+          'elements': [
+            | 'token' (
+              'name': 'STRING'
+            )
+            | 'token' (
+              'name': '\':\''
+            )
+            | 'rule' (
+              'name': 'value'
+            )
+          ]
+        )
+      ]
+    )
+    'arr': (
+      'name': 'arr'
+      'alternatives': [
+        (
+          'elements': [
+            | 'token' (
+              'name': '\'[\''
+            )
+            | 'rule' (
+              'name': 'value'
+            )
+            | 'block' (
+              'alternatives': [
+                (
+                  'elements': [
+                    | 'token' (
+                      'name': '\',\''
+                    )
+                    | 'rule' (
+                      'name': 'value'
+                    )
+                  ]
+                )
+              ]
+            )
+            | 'token' (
+              'name': '\']\''
+            )
+          ]
+        )
+        (
+          'elements': [
+            | 'token' (
+              'name': '\'[\''
+            )
+            | 'token' (
+              'name': '\']\''
+            )
+          ]
+        )
+      ]
+    )
+    'value': (
+      'name': 'value'
+      'alternatives': [
+        (
+          'elements': [
+            | 'token' (
+              'name': 'STRING'
+            )
+          ]
+        )
+        (
+          'elements': [
+            | 'token' (
+              'name': 'NUMBER'
+            )
+          ]
+        )
+        (
+          'elements': [
+            | 'rule' (
+              'name': 'obj'
+            )
+          ]
+        )
+        (
+          'elements': [
+            | 'rule' (
+              'name': 'arr'
+            )
+          ]
+        )
+        (
+          'elements': [
+            | 'token' (
+              'name': '\'true\''
+            )
+          ]
+        )
+        (
+          'elements': [
+            | 'token' (
+              'name': '\'false\''
+            )
+          ]
+        )
+        (
+          'elements': [
+            | 'token' (
+              'name': '\'null\''
+            )
+          ]
+        )
+      ]
+    )
+  )
+  'tokenNameToTypeMap': (
+    'EOF': -1
+    'T__0': 1
+    'T__1': 2
+    'T__2': 3
+    'T__3': 4
+    'T__4': 5
+    'T__5': 6
+    'T__6': 7
+    'T__7': 8
+    'T__8': 9
+    'STRING': 10
+    'NUMBER': 11
+    'WS': 12
+  )
+  'stringLiteralToTypeMap': (
+    ''{'': 1
+    '','': 2
+    ''}'': 3
+    '':'': 4
+    ''['': 5
+    '']'': 6
+    ''true'': 7
+    ''false'': 8
+    ''null'': 9
+  )
+)

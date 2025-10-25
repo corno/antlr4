@@ -140,27 +140,27 @@ export interface BlockElement {
  *   'rules': (
  *     'expr': (
  *       'name': 'expr'
- *       'alternatives': (
+ *       'alternatives': [
  *         (
- *           'elements': (
+ *           'elements': [
  *             | token (
  *               'name': 'ID'
  *             )
  *             | block (
- *               'alternatives': (
+ *               'alternatives': [
  *                 (
- *                   'elements': (
+ *                   'elements': [
  *                     | token (
  *                       'name': 'PLUS'
  *                     )
- *                   )
+ *                   ]
  *                 )
- *               )
+ *               ]
  *               'ebnf': 'optional'
  *             )
- *           )
+ *           ]
  *         )
- *       )
+ *       ]
  *     )
  *   )
  * )
@@ -261,11 +261,12 @@ export function isEBNFBlock(element: Element): boolean {
  * ASTN Format Specification
  * 
  * The ASTN (Alternative Syntax Tree Notation) format uses:
- * 1. Parentheses () instead of braces {}
- * 2. Apostrophes ' for string keys instead of double quotes "
- * 3. No commas between array/object elements
- * 4. Tagged unions as: | state_name data... instead of ["state_name", data]
- * 5. Proper indentation for readability
+ * 1. Parentheses () for objects instead of braces {}
+ * 2. Square brackets [] for arrays (same as JSON)
+ * 3. Apostrophes ' for string keys instead of double quotes "
+ * 4. No commas between array/object elements
+ * 5. Tagged unions as: | state_name data... instead of ["state_name", data]
+ * 6. Proper indentation for readability
  * 
  * This format is more human-readable and can be useful for:
  * - Configuration files

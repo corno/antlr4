@@ -1,0 +1,243 @@
+(
+  'name': 'CSV'
+  'fileName': '../grammars-v4/csv/CSV.g4'
+  'type': | 'combined' (
+    'implicitLexer': (
+      'name': 'CSVLexer'
+      'fileName': '../grammars-v4/csv/CSV.g4'
+      'type': | 'lexer' ()
+      'rules': (
+        'T__0': (
+          'name': 'T__0'
+          'alternatives': [
+            (
+              'elements': [
+                | 'token' (
+                  'name': '\',\''
+                )
+              ]
+            )
+          ]
+        )
+        'T__1': (
+          'name': 'T__1'
+          'alternatives': [
+            (
+              'elements': [
+                | 'token' (
+                  'name': '\'\r\''
+                )
+              ]
+            )
+          ]
+        )
+        'T__2': (
+          'name': 'T__2'
+          'alternatives': [
+            (
+              'elements': [
+                | 'token' (
+                  'name': '\'\n\''
+                )
+              ]
+            )
+          ]
+        )
+        'TEXT': (
+          'name': 'TEXT'
+          'alternatives': [
+            (
+              'elements': [
+                | 'block' (
+                  'alternatives': [
+                    (
+                      'elements': [
+                        | 'set' (
+                          'elements': []
+                        )
+                      ]
+                    )
+                  ]
+                )
+              ]
+            )
+          ]
+        )
+        'STRING': (
+          'name': 'STRING'
+          'alternatives': [
+            (
+              'elements': [
+                | 'token' (
+                  'name': '\'"\''
+                )
+                | 'block' (
+                  'alternatives': [
+                    (
+                      'elements': [
+                        | 'token' (
+                          'name': '\'""\''
+                        )
+                      ]
+                    )
+                    (
+                      'elements': [
+                        | 'set' (
+                          'elements': [
+                            | 'token' (
+                              'name': '\'"\''
+                            )
+                          ]
+                        )
+                      ]
+                    )
+                  ]
+                )
+                | 'token' (
+                  'name': '\'"\''
+                )
+              ]
+            )
+          ]
+        )
+      )
+      'tokenNameToTypeMap': (
+        'EOF': -1
+        'T__0': 1
+        'T__1': 2
+        'T__2': 3
+        'TEXT': 4
+        'STRING': 5
+      )
+      'stringLiteralToTypeMap': (
+        '','': 1
+        ''\r'': 2
+        ''\n'': 3
+      )
+    )
+  )
+  'rules': (
+    'csvFile': (
+      'name': 'csvFile'
+      'alternatives': [
+        (
+          'elements': [
+            | 'rule' (
+              'name': 'hdr'
+            )
+            | 'block' (
+              'alternatives': [
+                (
+                  'elements': [
+                    | 'rule' (
+                      'name': 'row'
+                    )
+                  ]
+                )
+              ]
+            )
+            | 'token' (
+              'name': 'EOF'
+            )
+          ]
+        )
+      ]
+    )
+    'hdr': (
+      'name': 'hdr'
+      'alternatives': [
+        (
+          'elements': [
+            | 'rule' (
+              'name': 'row'
+            )
+          ]
+        )
+      ]
+    )
+    'row': (
+      'name': 'row'
+      'alternatives': [
+        (
+          'elements': [
+            | 'rule' (
+              'name': 'field'
+            )
+            | 'block' (
+              'alternatives': [
+                (
+                  'elements': [
+                    | 'token' (
+                      'name': '\',\''
+                    )
+                    | 'rule' (
+                      'name': 'field'
+                    )
+                  ]
+                )
+              ]
+            )
+            | 'block' (
+              'alternatives': [
+                (
+                  'elements': [
+                    | 'block' (
+                      'alternatives': [
+                        (
+                          'elements': [
+                            | 'token' (
+                              'name': '\'\r\''
+                            )
+                          ]
+                        )
+                      ]
+                    )
+                  ]
+                )
+              ]
+              'ebnf': 'optional'
+            )
+            | 'token' (
+              'name': '\'\n\''
+            )
+          ]
+        )
+      ]
+    )
+    'field': (
+      'name': 'field'
+      'alternatives': [
+        (
+          'elements': [
+            | 'token' (
+              'name': 'TEXT'
+            )
+          ]
+        )
+        (
+          'elements': [
+            | 'token' (
+              'name': 'STRING'
+            )
+          ]
+        )
+        (
+          'elements': []
+        )
+      ]
+    )
+  )
+  'tokenNameToTypeMap': (
+    'EOF': -1
+    'T__0': 1
+    'T__1': 2
+    'T__2': 3
+    'TEXT': 4
+    'STRING': 5
+  )
+  'stringLiteralToTypeMap': (
+    '','': 1
+    ''\r'': 2
+    ''\n'': 3
+  )
+)

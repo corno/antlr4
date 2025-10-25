@@ -92,7 +92,7 @@ public class GrammarJSONExporterDOM {
         @Override
         public String serializeAstn(int indentLevel) {
             if (value == null) return "null";
-            return "'" + value.replace("'", "\\'").replace("\n", "\\n").replace("\r", "\\r") + "'";
+            return "\"" + value.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r") + "\"";
         }
     }
     
@@ -179,11 +179,6 @@ public class GrammarJSONExporterDOM {
             this.value = value;
         }
         
-        public StateValue(String name, ObjectValue value) {
-            this.name = name;
-            this.value = value;
-        }
-        
         @Override
         public String serialize(int indentLevel) {
             // Serialize tagged union state as array: [name, value]
@@ -195,9 +190,9 @@ public class GrammarJSONExporterDOM {
         
         @Override
         public String serializeAstn(int indentLevel) {
-            // Serialize tagged union state as: | state_name ...data...
+            // Serialize tagged union state as: | 'state_name' ...data...
             StringBuilder sb = new StringBuilder();
-            sb.append("| ").append(name).append(" ");
+            sb.append("| '").append(name).append("' ");
             sb.append(value.serializeAstn(indentLevel));
             return sb.toString();
         }
@@ -436,7 +431,24 @@ public class GrammarJSONExporterDOM {
                     return convertEBNFElement(ast, child);
                 }
                 break;
+            case ANTLRParser.ALT:
+                // Alternative nodes - recurse into children
+                if (ast.getChildCount() == 1) {
+                    return convertElementFromAST((GrammarAST) ast.getChild(0));
+                }
+                // Multiple children - convert as block
+                return convertBlockElement(ast);
+            case ANTLRParser.ELEMENT_OPTIONS:
+                // Skip element options wrapper, get the actual element
+                if (ast.getChildCount() > 0) {
+                    return convertElementFromAST((GrammarAST) ast.getChild(0));
+                }
+                break;
             default:
+                // For any other type, try to recurse into children if there's exactly one
+                if (ast.getChildCount() == 1 && ast.getChild(0) instanceof GrammarAST) {
+                    return convertElementFromAST((GrammarAST) ast.getChild(0));
+                }
                 // Skip unknown node types
                 return null;
         }
@@ -540,8 +552,35 @@ public class GrammarJSONExporterDOM {
     private StateValue convertBlockElement(GrammarAST ast) {
         ObjectValue data = new ObjectValue();
         
-        // TODO: Convert alternatives within the block
+        // Convert alternatives within the block
         ArrayValue alternatives = new ArrayValue();
+        
+        for (int i = 0; i < ast.getChildCount(); i++) {
+            Object child = ast.getChild(i);
+            if (child instanceof GrammarAST) {
+                GrammarAST childAST = (GrammarAST) child;
+                if (childAST.getType() == ANTLRParser.ALT) {
+                    // This is an alternative - convert it
+                    ObjectValue altObj = new ObjectValue();
+                    ArrayValue elements = new ArrayValue();
+                    
+                    // Process all children of the ALT node
+                    for (int j = 0; j < childAST.getChildCount(); j++) {
+                        Object altChild = childAST.getChild(j);
+                        if (altChild instanceof GrammarAST) {
+                            Value elementValue = convertElementFromAST((GrammarAST) altChild);
+                            if (elementValue != null) {
+                                elements.add(elementValue);
+                            }
+                        }
+                    }
+                    
+                    altObj.put("elements", elements);
+                    alternatives.add(altObj);
+                }
+            }
+        }
+        
         data.put("alternatives", alternatives);
         
         return new StateValue("block", data);
